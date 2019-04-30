@@ -40,3 +40,8 @@ If you closely, look at the above code snippet, you can easily match it to fit t
 >In computer programming, the strategy pattern (also known as the policy pattern) is a behavioral software design pattern that enables selecting an algorithm at runtime. Instead of implementing a single algorithm directly, code receives run-time instructions as to which in a family of algorithms to use. ([Wikipedia](https://en.wikipedia.org/wiki/Strategy_pattern))
 
 As you can understand from the above strategy pattern definition, we can perfectly fit the above code snippet into this pattern, we just have to dynamically get the right algorithm ( the right implemention of ISomething). 
+
+In this article, we will build a simple console application with a hosted service that uses the advantage of scope DI and strategy pattern as shown in the class diagram.
+![Hosted Service with Strategy pattern](https://github.com/danielhunex/hostedservice-dotnetcore/blob/master/strategy-pattern.PNG "strategy pattern hosted service")
+
+
