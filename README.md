@@ -41,7 +41,21 @@ If you closely, look at the above code snippet, you can easily match it to fit t
 
 As you can understand from the above strategy pattern definition, we can perfectly fit the above code snippet into this pattern, we just have to dynamically get the right algorithm ( the right implemention of ISomething). 
 
-In this article, we will build a simple console application with a hosted service that uses the advantage of scope DI and strategy pattern as shown in the class diagram.
+In this article, we will build a simple console application with a hosted service that uses the advantage of scope DI and strategy pattern as shown in the class diagram. We will some manual 'queuing' system to trigger the execution. However, in real application, this could triggered by RabbitMQ or whatever kind of queue you want.
 ![Hosted Service with Strategy pattern](https://github.com/danielhunex/hostedservice-dotnetcore/blob/master/strategy-pattern.PNG "strategy pattern hosted service")
+
+### Prerequisite
+In order to follow up this project, you need vs code, .net core 2.2 or above.
+
+Let's do it
+
+1. Create a folder structure as  ***hostedservice->src***
+2. From your favourite terminal (I m using Windows command Promopt), navigate to the the folder structure you just created
+    `dotnet new console --name HostedService`
+This will create a .net core console application. In vs code it looks like the following
+
+![Code structure](https://github.com/danielhunex/hostedservice-dotnetcore/blob/master/code-structure.PNG)
+  
+
 
 
