@@ -123,7 +123,7 @@ namespace HostedService
 }
 
 ```
-4. Now lets create a hosted service. Here we are not directly inheriting from IHostedService but from BackgroundService which implmenents the interface IHostedService
+4. Now lets create a hosted service- `HostedServiceContext`. Here we are not directly inheriting from IHostedService but from BackgroundService which implmenents the interface IHostedService, and we will implement the ExecuteAsync method
 
 ```csharp
 using System;
@@ -150,5 +150,38 @@ namespace HostedService
 ```
 This class is right is pretty bare but see that we are using the `IServiceScopeFactory` interface and the concrete implementation will be injected.
 
-5.
+5. Now let's get into the program.cs file and host our background service, register classes for DI. We will use `HostBuilder` to add interfaces/classes for DI and to create a host as shown the below
+```csharp
+using System;
+using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+
+namespace HostedService
+{
+    class Program
+    {
+        static async Task Main(string[] args)
+        {
+            var builder = new HostBuilder()
+            .ConfigureServices((hostContext, services) =>
+            {
+                services.AddOptions();
+                services.AddHostedService<HostedServiceContext>();
+                services.AddScoped<StrategyA>();
+                services.AddScoped<StrategyB>();
+                services.AddScoped<StrategyC>();
+            });
+            await builder.RunConsoleAsync();
+        }
+    }
+}
+```
+ ### So far
+ We created an interface `IStrategy` and added three concrete implementations `StrategyA`, `StrategyB`,`StrategyC`. As you can see each of the concrete classes has a console output in its constructor. Its purpose is just to show the each execution of a scope will create a new instance of that concrete class and we will see something like '...StrategyC Created...' everytime StrategyC dynamically is selected and created. The `Program` is all set registering objects and hosting the service.
+ We also created `HostedServiceContext` which we will add more to it. What we are going to do in this classes is
+  1. Use the `IServiceScopeFactory` to create a scope and create the right `IStrategy` based on a queue input
+  2. Call the ExecuteAsync method of the Strategy selected.
+
+First lets implement a pseudo-queue service that we will use to drive the execution of the background service
 
