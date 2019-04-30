@@ -56,6 +56,99 @@ This will create a .net core console application. In vs code it looks like the f
 
 ![Code structure](https://github.com/danielhunex/hostedservice-dotnetcore/blob/master/code-structure.PNG)
   
+3. Add the following class to the ***src***
+```csharp
+using System.Threading.Tasks;
 
+namespace HostedService
+{
+    public interface IStrategy
+    {
+        Task ExecuteAsync();
+    }
+}
+```
+And the foolwing concrete implementations
+```csharp
+using System;
+using System.Threading.Tasks;
+namespace HostedService
+{
+    public class StrategyA : IStrategy
+    {
+        public StrategyA()
+        {
+            Console.WriteLine("...StrategyA Created...");
+        }
+        public async Task ExecuteAsync()
+        {
+            await Task.Run(() => Console.WriteLine("StrategyA: Executing"));
+        }
+    }
+}
 
+using System;
+using System.Threading.Tasks;
+namespace HostedService
+{
+    public class StrategyB : IStrategy
+    {
+        public StrategyB()
+        {
+            Console.WriteLine("...StrategyB Created...");
+        }
+        public async Task ExecuteAsync()
+        {
+            await Task.Run(() => Console.WriteLine("StrategyB: Executing"));
+        }
+    }
+}
+
+using System;
+using System.Threading.Tasks;
+
+namespace HostedService
+{
+    public class StrategyC : IStrategy
+    {
+        public StrategyC()
+        {
+            Console.WriteLine("...StrategyC Created...");
+        }
+        public async Task ExecuteAsync()
+        {
+            await Task.Run(() => Console.WriteLine("StrategyC: Executing"));
+        }
+    }
+}
+
+```
+4. Now lets create a hosted service. Here we are not directly inheriting from IHostedService but from BackgroundService which implmenents the interface IHostedService
+
+```csharp
+using System;
+using System.Threading;
+using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+
+namespace HostedService
+{
+    public class HostedServiceContext : BackgroundService
+    {
+        private IServiceScopeFactory _serviceScopeFactory;
+        public HostedServiceContext(IServiceScopeFactory serviceScopeFactory)
+        {
+            _serviceScopeFactory = serviceScopeFactory;
+        }
+        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+        {
+           
+        }
+    }
+}
+```
+This class is right is pretty bare but see that we are using the `IServiceScopeFactory` interface and the concrete implementation will be injected.
+
+5.
 
