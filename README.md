@@ -68,7 +68,7 @@ namespace HostedService
     }
 }
 ```
-And the foolwing concrete implementations
+And the following concrete implementations
 ```csharp
 using System;
 using System.Threading.Tasks;
