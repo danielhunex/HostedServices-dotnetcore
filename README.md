@@ -69,9 +69,9 @@ namespace HostedService
 }
 ```
 And the following concrete implementations
+
 ```csharp
-using System;
-using System.Threading.Tasks;
+
 namespace HostedService
 {
     public class StrategyA : IStrategy
