@@ -364,6 +364,7 @@ Last but not the least, let's register these classes to the DI, update our queui
 ```
 
 Now you should be able to run and get the following result :)
+
 ![Result](https://github.com/danielhunex/hostedservice-dotnetcore/blob/master/version-2-result.PNG)
 
 You can use the Scope lifetime of .Net Core any where you want, where specially you don't want a service that consumes resources to be live
