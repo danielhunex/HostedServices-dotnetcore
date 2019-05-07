@@ -183,5 +183,176 @@ namespace HostedService
   1. Use the `IServiceScopeFactory` to create a scope and create the right `IStrategy` based on a queue input
   2. Call the ExecuteAsync method of the Strategy selected.
 
-First lets implement a pseudo-queue service that we will use to drive the execution of the background service
+First lets implement a pseudo-queue service that we will use to drive the execution of the background service. In this implementation, I want to store the type of each concrete implementation in the a queue. When dequeued, this type will be used to requirement the right implemenation of the `IStrategy`. It is possible also to use a string key for selecting dynamically the right implementation of `IStrategy` but you need a simple mapper between the key and the implemention type. Here is a simple, manual queue for driving the execution of the background service ( In real world application, you can use queuing systems such as RabbitMQ)
+```csharp
+ public class DriverQueue
+    {
+        private static Queue<Type> _queue = new Queue<Type>();
 
+        static DriverQueue()
+        {
+            _queue.Enqueue(typeof(StrategyA));
+            _queue.Enqueue(typeof(StrategyC));
+            _queue.Enqueue(typeof(StrategyB));
+            _queue.Enqueue(typeof(StrategyC));
+            _queue.Enqueue(typeof(StrategyA));
+            _queue.Enqueue(typeof(StrategyC));
+            _queue.Enqueue(typeof(StrategyA));
+            _queue.Enqueue(typeof(StrategyC));
+        }
+
+        public static Type TryDequeue()
+        {
+            Type type;
+            if (_queue.TryDequeue(out type) == false)
+            {
+                throw new InvalidOperationException();
+            }
+            return type;
+        }
+    }
+}
+```
+`DriverQueue` is a simple class, it has a queue and adds type of each concrete implementation of `IStrategy` randomly. This queue will be used in the `HostedServiceContext` to drive the execution of a strategy dynamically. Since the purpose of this article is to show about Scope DI and Strategy pattern, this implementation of the queue is just a 'Hello World' equivalent
+Now let's implement the `ExecuteAsync` method of the `HostedServiceContext`
+
+```csharp
+
+ public class HostedServiceContext : BackgroundService
+    {
+        private IServiceScopeFactory _serviceScopeFactory;
+        public HostedServiceContext(IServiceScopeFactory serviceScopeFactory)
+        {
+            _serviceScopeFactory = serviceScopeFactory;
+        }
+        
+        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+        {
+            var type = DriverQueue.TryDequeue();
+            while (type != null)
+            {
+                using (var scope = _serviceScopeFactory.CreateScope())
+                {
+                    IStrategy cmd = scope.ServiceProvider.GetRequiredService(type) as IStrategy;
+
+                    if (cmd != null)
+                    {
+                        await cmd.ExecuteAsync();
+                    }
+                    await Task.Delay(3000);
+                }
+                type = DriverQueue.TryDequeue();
+            };
+        }
+    }
+```
+That is all we need. We continueusly pull the queue, we get the dequeued value and use it a along with `ServiceScopeFactory` to create the right implementation. Now you can run the app and get the following results. As you can see, each execution of a scope will create a new object of the specific type which is what we want.
+
+![Result](https://github.com/danielhunex/hostedservice-dotnetcore/blob/master/version-1-result.PNG)
+
+### More -- Version 2
+
+What if we have another implementation of `IStrategy` - `StrategyD` which depends on (Constructor injection) on a service class `IStarPrinter`. Here is where you will see the power of our implementation following Open Close principle. We are going never back to the `HostedServiceContext` and modified it. Our implementation is closed for modification but open to extension. so lets extend it. Lets define `IStarPrinter` and a concrete implemention `TriangleStarPrinter` which prints a triangle of stars
+
+```csharp
+ public interface IStarPrinter
+    {
+        void Print();
+    }
+    
+     public class TriangleStarPrinter : IStarPrinter
+    {
+        public void Print()
+        {
+            for (int i = 1; i < 10; i++)
+            {
+                for (int j = 10; j > i; j--)
+                {
+                    Console.Write(" ");
+                }
+                for (int z = 0; z <  i; z++)
+                {
+                    Console.Write("*");
+                }
+                Console.WriteLine();
+
+            }
+        }
+    }
+```
+
+Next lets add `StrategyD`
+
+```csharp
+   public class StrategyD : IStrategy
+    {
+        private readonly IStarPrinter _starPrinter;
+        public StrategyD(IStarPrinter starPrinter)
+        {
+            Console.WriteLine("...StrategyD Created...");
+            _starPrinter = starPrinter;
+        }
+        public async Task ExecuteAsync()
+        {
+            await Task.Run(() => _starPrinter.Print());
+        }
+    }
+```
+`StrategyD` depends on `IStarPrinter` and on its `ExecuteAsync` methods , it calls the `Print` method of the it
+Now lets add register these classes to the DI, update our queuing (add `StrategyD`) (in real world, you don't do this) and we are all set. Our application is extensible without modification (we don't have if else or switch statement)
+
+```csharp
+ class Program
+    {
+        static async Task Main(string[] args)
+        {
+            var builder = new HostBuilder()
+                .ConfigureServices((hostContext, services) =>
+                {
+                    services.AddOptions();
+                    services.AddSingleton<IStarPrinter, TriangleStarPrinter>();
+                    services.AddHostedService<HostedServiceContext>();
+                    services.AddScoped<StrategyA>();
+                    services.AddScoped<StrategyB>();
+                    services.AddScoped<StrategyC>();
+                    services.AddScoped<StrategyD>();
+                });
+
+            await builder.RunConsoleAsync();
+        }
+    }
+    
+      public class DriverQueue
+    {
+        private static Queue<Type> _queue = new Queue<Type>();
+
+        static DriverQueue()
+        {
+            _queue.Enqueue(typeof(StrategyA));
+            _queue.Enqueue(typeof(StrategyC));
+            _queue.Enqueue(typeof(StrategyB));
+            _queue.Enqueue(typeof(StrategyC));
+            _queue.Enqueue(typeof(StrategyA));
+            _queue.Enqueue(typeof(StrategyC));
+            _queue.Enqueue(typeof(StrategyA));
+            _queue.Enqueue(typeof(StrategyC));
+            _queue.Enqueue(typeof(StrategyD));
+            _queue.Enqueue(typeof(StrategyC));
+            _queue.Enqueue(typeof(StrategyA));
+            _queue.Enqueue(typeof(StrategyD));
+        }
+
+        public static Type TryDequeue()
+        {
+            Type type;
+            if (_queue.TryDequeue(out type) == false)
+            {
+                throw new InvalidOperationException();
+            }
+            return type;
+        }
+    }
+```
+
+Now you should be able to run and get the following result :)
+![Result](https://github.com/danielhunex/hostedservice-dotnetcore/blob/master/version-2-result.PNG)
