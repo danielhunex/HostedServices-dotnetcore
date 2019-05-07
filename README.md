@@ -183,7 +183,7 @@ namespace HostedService
   1. Use the `IServiceScopeFactory` to create a scope and create the right `IStrategy` based on a queue input
   2. Call the ExecuteAsync method of the Strategy selected.
 
-First lets implement a pseudo-queue service that we will use to drive the execution of the background service. In this implementation, I want to store the type of each concrete implementation in the a queue. When dequeued, this type will be used to requirement the right implemenation of the `IStrategy`. It is possible also to use a string key for selecting dynamically the right implementation of `IStrategy` but you need a simple mapper between the key and the implemention type. Here is a simple, manual queue for driving the execution of the background service ( In real world application, you can use queuing systems such as RabbitMQ)
+First lets implement a pseudo-queue service that we will use to drive the execution of the background service. In this implementation, I want to store the type of each concrete implementation in the a queue. When dequeued, this type will be used to request the right implementation of the `IStrategy` from the scope factory. It is possible also to use a string key for selecting dynamically the right implementation of `IStrategy` but you need a simple mapper between the key and the implemention type. Here is a simple, manual queue for driving the execution of the background service ( In real world application, you can use queuing systems such as RabbitMQ)
 ```csharp
  public class DriverQueue
     {
