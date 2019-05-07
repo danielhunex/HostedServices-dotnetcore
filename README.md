@@ -58,7 +58,9 @@ This will create a .net core console application. In vs code it looks like the f
 ![Code structure](https://github.com/danielhunex/hostedservice-dotnetcore/blob/master/code-structure.PNG)
   
 3. Add the following class to the ***src***
+
 ```csharp
+
 using System.Threading.Tasks;
 
 namespace HostedService
