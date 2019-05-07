@@ -155,7 +155,9 @@ namespace HostedService
 This class is right is pretty bare but see that we are using the `IServiceScopeFactory` interface and the concrete implementation will be injected.
 
 5. Now let's get into the program.cs file and host our background service, register classes for DI. We will use `HostBuilder` to add interfaces/classes for DI and to create a host as shown the below
+
 ```csharp
+
 using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
@@ -181,6 +183,7 @@ namespace HostedService
     }
 }
 ```
+
 ### So far
  We created an interface `IStrategy` and added three concrete implementations `StrategyA`, `StrategyB`,`StrategyC`. As you can see each of the concrete classes has a console output in its constructor. Its purpose is just to show the each execution of a scope will create a new instance of that concrete class and we will see something like '...StrategyC Created...' everytime StrategyC dynamically is selected and created. The `Program` is all set registering objects and hosting the service.
  We also created `HostedServiceContext` which we will add more to it. What we are going to do in this classes is
