@@ -155,7 +155,8 @@ namespace HostedService
 
 This class is right is pretty bare but see that we are using the `IServiceScopeFactory` interface and the concrete implementation will be injected.
 
-5. Now let's get into the program.cs file and host our background service, register classes for DI. We will use `HostBuilder` to add interfaces/classes for DI and to create a host as shown the below
+5. Now let's get into the program.cs file and host our background service, register classes for DI. We will use `HostBuilder` to add interfaces/classes for DI and to create a host as shown the below.
+
 
 ```csharp
 
