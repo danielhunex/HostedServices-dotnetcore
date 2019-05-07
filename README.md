@@ -177,7 +177,7 @@ namespace HostedService
     }
 }
 ```
- ### So far
+### So far
  We created an interface `IStrategy` and added three concrete implementations `StrategyA`, `StrategyB`,`StrategyC`. As you can see each of the concrete classes has a console output in its constructor. Its purpose is just to show the each execution of a scope will create a new instance of that concrete class and we will see something like '...StrategyC Created...' everytime StrategyC dynamically is selected and created. The `Program` is all set registering objects and hosting the service.
  We also created `HostedServiceContext` which we will add more to it. What we are going to do in this classes is
   1. Use the `IServiceScopeFactory` to create a scope and create the right `IStrategy` based on a queue input
