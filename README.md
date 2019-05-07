@@ -21,6 +21,7 @@ public class HelloContext
         _smh.ShakingMyHead();
     }
 }
+
 ```
 As you can see, this piece of code violates the open close principle because of just an ego; If I have to include `SomethingC` implementation of `ISomething`, I have to modify this code. I asked the manager/developer, why they did it that way, and why they didn't use the ([IServiceScopeFactory](https://docs.microsoft.com/en-us/dotnet/api/microsoft.extensions.dependencyinjection.iservicescopefactory?view=aspnetcore-2.2)) to create those object dynamically. He told me that DI lifetime Scope in .net core is tied to Per Web Request and the particular hosted service has nothing to do with web request. So I was told to leave it as is and just modify it for new implementation. 
 However, the Scope lifetime is not tied to a Web Request at all, you can use it in any unit of work which could be accessing database, create azure blobs, or even writing out to a console. Scope in .net core is a DI lifetime coordinated by ([IServiceScopeFactory](https://docs.microsoft.com/en-us/dotnet/api/microsoft.extensions.dependencyinjection.iservicescopefactory?view=aspnetcore-2.2)) which implements `IDisposable` and creates objects that are registered in the DI `ConfigureServices` as Scope (`AddScoped()`). You can use  `IServiceScopeFactory` in a `using` block to create a scope and get create a scoped object which will be disposed after the block and will be recreated when you get back to the block of code again. 
@@ -67,6 +68,7 @@ namespace HostedService
         Task ExecuteAsync();
     }
 }
+
 ```
 And the following concrete implementations
 
