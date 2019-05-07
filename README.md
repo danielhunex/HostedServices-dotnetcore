@@ -70,8 +70,8 @@ namespace HostedService
         Task ExecuteAsync();
     }
 }
-
 ```
+
 And the following concrete implementations
 
 ```csharp
