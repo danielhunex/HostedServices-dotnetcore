@@ -22,7 +22,7 @@ namespace HostedService
                 {
                     IStrategy cmd = scope.ServiceProvider.GetRequiredService(type) as IStrategy;
                     await cmd.ExecuteAsync();
-                    await Task.Delay(10000);
+                    await Task.Delay(3000);
                 }
                 type = DriverQueue.TryDequeue();
             };
