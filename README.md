@@ -252,7 +252,7 @@ That is all we need. We continueusly pull the queue, we get the dequeued value a
 
 ### More -- Version 2
 
-What if we have another implementation of `IStrategy` - `StrategyD` which depends on (Constructor injection) on a service class `IStarPrinter`. Here is where you will see the power of our implementation following Open Close principle. We are going never back to the `HostedServiceContext` and modified it. Our implementation is closed for modification but open to extension. so lets extend it. Lets define `IStarPrinter` and a concrete implemention `TriangleStarPrinter` which prints a triangle of stars
+What if we have another implementation of `IStrategy` - `StrategyD` which depends on (Constructor injection) on a service class `IStarPrinter`. Here is where you will see the power of our implementation following Open Close principle. We are going never back to the `HostedServiceContext` and modified it. Our implementation is closed for modification but open to extension. so lets extend defining `IStarPrinter` and its concrete implemention `TriangleStarPrinter` which prints a triangle of stars
 
 ```csharp
  public interface IStarPrinter
