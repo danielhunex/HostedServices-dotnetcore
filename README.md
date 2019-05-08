@@ -43,7 +43,8 @@ If you closely, look at the above code snippet, you can easily match it to fit t
 As you can understand from the above strategy pattern definition, we can perfectly fit the above code snippet into this pattern, we just have to dynamically get the right algorithm ( the right implemention of ISomething). 
 
 In this article, we will build a simple console application with a hosted service that uses the advantage of scope DI and strategy pattern as shown in the class diagram. We will some manual 'queuing' system to trigger the execution. However, in real application, this could triggered by RabbitMQ or whatever kind of queue you want.
-![Hosted Service with Strategy pattern](https://github.com/danielhunex/hostedservice-dotnetcore/blob/master/strategy-pattern.PNG "strategy pattern hosted service")
+
+![strategy-pattern](https://user-images.githubusercontent.com/8184651/57377186-57475500-7191-11e9-8675-a710eef6718f.PNG)
 
 ### Prerequisite
 In order to follow up this project, you need vs code, .net core 2.2 or above.
@@ -55,7 +56,7 @@ Let's do it
     `dotnet new console --name HostedService`
 This will create a .net core console application. In vs code it looks like the following
 
-![Code structure](https://github.com/danielhunex/hostedservice-dotnetcore/blob/master/code-structure.PNG)
+![code-structure](https://user-images.githubusercontent.com/8184651/57377178-50b8dd80-7191-11e9-859d-fd12a4468a3f.PNG)
   
 3. Add the following class to the ***src***
 
@@ -257,7 +258,7 @@ Now let's implement the `ExecuteAsync` method of the `HostedServiceContext`
 ```
 That is all we need. We continueusly pull the queue, we get the dequeued value and use it a along with `ServiceScopeFactory` to create the right implementation. Now you can run the app and get the following results. As you can see, each execution of a scope will create a new object of the specific type which is what we want.
 
-![Result](https://github.com/danielhunex/hostedservice-dotnetcore/blob/master/version-1-result.PNG)
+![version-1-result](https://user-images.githubusercontent.com/8184651/57377191-59111880-7191-11e9-9c10-a61e9861f81c.PNG)
 
 ### More -- Version 2
 
